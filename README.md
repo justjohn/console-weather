@@ -18,6 +18,22 @@ environment variable to it.
 
     -f: Show 4 day forecast.
 
+### Output
+
+    --------------------------------------------------------------------------------
+    
+                        Central Square, Cambridge, Massachusetts                    
+    
+                           Scattered Clouds :: 60.9 F (16.1 C)                      
+    
+                       Thu          Fri          Sat          Sun                   
+                     65 / 50      66 / 64      68 / 48      61 / 48                 
+    
+                         Last Updated on October 18, 5:00 PM EDT                    
+    
+    --------------------------------------------------------------------------------
+
+
 ## License
 
 console-weather is available under a BSD 2-clause license. See LICENSE for details.
