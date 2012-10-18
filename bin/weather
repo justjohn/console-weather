@@ -1,0 +1,94 @@
+#!/usr/bin/env node
+
+var expanded = false,
+	args = Array.prototype.slice.apply(process.argv),
+	out = process.stdout,
+	err = process.stderr;
+
+// trim node and weather off
+args.shift();
+args.shift();
+
+for (var i=0; i<args.length; i++) {
+	arg = args[i];
+	if (arg.trim() == "-f")
+		expanded = true;
+}
+
+var api_key = process.env.WEATHER_API,
+	API = require('../src/api').API,
+	utils = require('../src/utils'),
+	api = new API(api_key);
+
+if (!api_key) {
+	err.write(
+		"No WEATHER_API environment variable present.\n\n" +
+		"Please set the WEATHER_API environment variable to a key from:\n" +
+		"http://api.wunderground.com/weather/api/\n\n"
+		);
+	return;
+}
+
+api
+.geolocate()
+.then(function(location) {
+	return api.forecast(location.zip);
+})
+.then(function(data) {
+
+	var weather  = data.current_observation,
+		txt_forecast = data.forecast.txt_forecast.forecastday,
+		forecast = data.forecast.simpleforecast.forecastday,
+		location = weather.observation_location.full,
+		time     = weather.observation_time,
+		temp     = weather.temperature_string,
+		conditions = weather.weather;
+
+	var segment,
+		line_length = 80,
+		forecast_length = 80,
+		block_size = Math.floor(line_length / forecast.length),
+		i,
+		line_day = "",
+		line_temp = "";
+
+	if (block_size > 13)
+		block_size = 13;
+
+	for (i=0; i<forecast.length; i++) {
+		segment = forecast[i];
+
+		line_day += utils.pad(segment.date.weekday_short, block_size);
+		line_temp += utils.pad(segment.high.fahrenheit + " / "
+								+ segment.low.fahrenheit, block_size);
+	}
+
+	var output = "\n"
+			   + utils.repeat('-', line_length) + "\n\n"
+			   + utils.pad(location, line_length) + "\n\n"
+			   + utils.pad(conditions + " :: " + temp, line_length) + "\n\n"
+			   + utils.pad(line_day, line_length) + "\n"
+			   + utils.pad(line_temp, line_length) + "\n\n"
+			   + utils.pad(time, line_length) + "\n\n"
+			   + utils.repeat('-', line_length) + "\n";
+
+	if (expanded) {
+		for (i=0; i<txt_forecast.length; i++) {
+			segment = txt_forecast[i];
+
+			output += "\n" + segment.title.toUpperCase() + "\n"
+					+ utils.wordAwareFormat(segment.fcttext, forecast_length);
+		}
+
+		output += "\n" + utils.repeat('-', line_length) + "\n";
+	}
+
+	out.write(output);
+
+})
+.fail(function(error) {
+	err.write(
+		"Unable to access Weather Underground API.\n"
+	 	+ error.type + ": " + error.description);
+});
+
