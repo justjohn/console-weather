@@ -22,7 +22,7 @@ API.prototype.call = function(path) {
 			output += chunk;
 		});
 
-		res.on('end', function (chunk) {
+		res.on('end', function () {
 			var json = JSON.parse(output);
 			deferred.resolve(json);
 		});
@@ -59,10 +59,19 @@ API.prototype.geolocate = function() {
 	return deferred.promise;
 };
 
-API.prototype.forecast = function(zip) {
-	var deferred = Q.defer();
-
-	this.call('/conditions/forecast/q/' + zip + '.json').then(function(data) {
+API.prototype.forecast = function(location) {
+	var deferred = Q.defer(),
+        path;
+        
+    if (location.zip) {
+        path = location.zip;
+    } else {
+        path = location.country_iso3166;
+        if (location.state) path += '/' + location.state;
+        path += '/' + location.city;
+    }
+    
+	this.call('/conditions/forecast/q/' + path  + '.json').then(function(data) {
 		deferred.resolve(data);
 
 	}, function(err) {

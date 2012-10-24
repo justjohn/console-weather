@@ -32,7 +32,7 @@ if (!api_key) {
 api
 .geolocate()
 .then(function(location) {
-	return api.forecast(location.zip);
+	return api.forecast(location);
 })
 .then(function(data) {
 
