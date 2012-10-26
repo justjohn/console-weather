@@ -14,9 +14,14 @@ environment variable to it.
 
 ## Usage
 
-    weather [-f]
+    weather [OPTION]...
+    Print the current weather conditions and forecast.
 
-    -f: Show 4 day forecast.
+    Options:
+
+        -c       Output temperature in celsius.
+        -f       Print 4-day forecast.
+        --color  Colorize the output.
 
 ### Output
 
