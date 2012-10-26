@@ -61,17 +61,9 @@ API.prototype.geolocate = function() {
 
 API.prototype.forecast = function(location) {
 	var deferred = Q.defer(),
-        path;
-        
-    if (location.zip) {
-        path = location.zip;
-    } else {
-        path = location.country_iso3166;
-        if (location.state) path += '/' + location.state;
-        path += '/' + location.city;
-    }
-    
-	this.call('/conditions/forecast/q/' + path  + '.json').then(function(data) {
+        path = location.l;
+
+	this.call('/conditions/forecast' + path  + '.json').then(function(data) {
 		deferred.resolve(data);
 
 	}, function(err) {
