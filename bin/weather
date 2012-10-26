@@ -6,7 +6,17 @@ var options = {
 	},
 	args = Array.prototype.slice.apply(process.argv),
 	out = process.stdout,
-	err = process.stderr;
+	err = process.stderr,
+	api_key    = process.env.WEATHER_API,
+
+	// Dependencies
+	API        = require('../src/api').API,
+	utils      = require('../src/utils'),
+	colorSpace = require('../conf/colors'),
+	doc        = require('../conf/doc')
+	ansiTrim   = require('cli-color/lib/trim'),
+
+	api = new API(api_key);
 
 // trim node and weather off
 args.shift();
@@ -22,52 +32,22 @@ for (var i=0; i<args.length; i++) {
 
 	if (arg.trim() == "-c")
 		options.useFahrenheit = false;
-}
 
-var api_key = process.env.WEATHER_API,
-	API = require('../src/api').API,
-	utils = require('../src/utils'),
-	clc = require('cli-color'),
-	ansiTrim = require('cli-color/lib/trim'),
-	api = new API(api_key);
+	if (arg.trim() == "--help")
+	{
+		doc.print(out, "USAGE");
+		if (!api_key) doc.print(err, "API_KEY");
+		return 1;
+	}
+
+}
 
 if (!api_key) {
-	err.write(
-		"No WEATHER_API environment variable present.\n\n" +
-		"Please set the WEATHER_API environment variable to a key from:\n" +
-		"http://api.wunderground.com/weather/api/\n\n"
-		);
-	return;
+	doc.print(err, "API_KEY");
+	return 1;
 }
 
-var none=function(s){return s;},
-	colorSpace = {
-		none: {
-			bar: none,
-			loc: none,
-			high: none,
-			temp: none,
-			day: none,
-			tempLow: none,
-			dim: none,
-
-			fullDay: none,
-			fullText: none
-		},
-		default: {
-			bar: none,
-			loc: clc.yellow,
-			high: clc.blue.bold,
-			temp: clc.blue.bold,
-			day: none,
-			tempLow: none,
-			dim: clc.red,
-
-			fullDay: clc.yellow,
-			fullText: none
-		}
-	},
-	color = colorSpace[options.color?'default':'none'];
+var color = colorSpace[options.color?'default':'none'];
 
 api.geoforecast()
 .then(function(data) {

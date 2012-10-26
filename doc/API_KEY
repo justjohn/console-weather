@@ -1,0 +1,5 @@
+console-weather requires you to have a Weather Underground API key set in the
+WEATHER_API environment variable.
+
+You can get a key from
+    http://api.wunderground.com/weather/api/
