@@ -37,6 +37,22 @@ API.prototype.call = function(path) {
 	return deferred.promise;
 };
 
+API.prototype.geoforecast = function() {
+	var deferred = Q.defer();
+
+	this.call('/conditions/forecast/q/autoip.json').then(function(data) {
+		deferred.resolve(data);
+
+	}, function(err) {
+		deferred.reject({
+			type: 'callfail',
+			description: err
+		});
+	});
+
+	return deferred.promise;
+};
+
 API.prototype.geolocate = function() {
 	var deferred = Q.defer();
 
