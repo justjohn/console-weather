@@ -18,7 +18,6 @@ environment variable to it.
     Print the current weather conditions and forecast.
 
     Options:
-
         -c       Output temperature in celsius.
         -f       Print 4-day forecast.
         --color  Colorize the output.
