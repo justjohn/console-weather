@@ -21,17 +21,16 @@ environment variable to it.
 ### Output
 
     --------------------------------------------------------------------------------
-    
-                        Central Square, Cambridge, Massachusetts                    
-    
-                           Scattered Clouds :: 60.9 F (16.1 C)                      
-    
-                       Thu          Fri          Sat          Sun                   
-                     65 / 50      66 / 64      68 / 48      61 / 48                 
-    
-                         Last Updated on October 18, 5:00 PM EDT                    
-    
+
+                        Central Square, Cambridge, Massachusetts
+
+                           Scattered Clouds :: 60.9 F (16.1 C)
+
+                       Thu          Fri          Sat          Sun
+                     65 / 50      66 / 64      68 / 48      61 / 48
+
     --------------------------------------------------------------------------------
+    Last Updated on October 18, 5:00 PM EDT                      Weather Underground
 
 
 ## License
