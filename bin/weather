@@ -42,6 +42,7 @@ api
 		conditions = weather.weather;
 
 	var segment,
+		credits = " Weather Underground",
 		line_length = 80,
 		forecast_length = 80,
 		block_size = Math.floor(line_length / forecast.length),
@@ -65,20 +66,20 @@ api
 			   + utils.pad(location, line_length) + "\n\n"
 			   + utils.pad(conditions + " :: " + temp, line_length) + "\n\n"
 			   + utils.pad(line_day, line_length) + "\n"
-			   + utils.pad(line_temp, line_length) + "\n\n"
-			   + utils.pad(time, line_length) + "\n\n"
-			   + utils.repeat('-', line_length) + "\n";
+			   + utils.pad(line_temp, line_length) + "\n";
 
 	if (expanded) {
+		output += "\n" + utils.repeat('-', line_length) + "\n";
 		for (i=0; i<txt_forecast.length; i++) {
 			segment = txt_forecast[i];
 
 			output += "\n" + segment.title.toUpperCase() + "\n"
 					+ utils.wordAwareFormat(segment.fcttext, forecast_length);
 		}
-
-		output += "\n" + utils.repeat('-', line_length) + "\n";
 	}
+
+	output += "\n" + utils.repeat('-', line_length) + "\n"
+		   + time + utils.repeat(' ', line_length - credits.length - time.length) + credits + "\n";
 
 	out.write(output);
 

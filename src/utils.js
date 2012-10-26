@@ -10,12 +10,14 @@ exports.padRight = function(string, pad, length) {
 	return (string + exports.repeat(pad, length)).slice(0, length);
 };
 
-exports.pad = function(string, length) {
+exports.pad = function(string, length, chr) {
+	chr = chr || " ";
+
 	var pad = (length - string.length) / 2,
 		intPad = Math.floor(pad),
 		start = intPad + (pad == intPad?0:1);
 
-	return exports.repeat(" ", start) + string + exports.repeat(" ", intPad);
+	return exports.repeat(chr, start) + string + exports.repeat(chr, intPad);
 }
 
 exports.wordAwareFormat = function(string, length) {
