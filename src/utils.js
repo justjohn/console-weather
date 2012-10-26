@@ -30,8 +30,8 @@ exports.wordAwareFormat = function(string, length) {
 		line = [];
 
 	while(words.length > 0) {
-		var word = words.shift(),
-			word_length = ansiTrim(word).length + 1;
+		var word = ansiTrim(words.shift()),
+			word_length = word.length + 1;
 
 		line_length += word_length;
 		if (line_length > length) {
@@ -43,7 +43,7 @@ exports.wordAwareFormat = function(string, length) {
 		line.push(word);
 	}
 
-	if (ansiTrim(line).length > 0)
+	if (line.length > 0)
 		output += line.join(" ") + "\n";
 
 	return output;
