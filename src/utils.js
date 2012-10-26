@@ -1,3 +1,5 @@
+var ansiTrim = require('cli-color/lib/trim');
+
 exports.repeat = function(str, length) {
 	return new Array(length + 1).join(str);
 };
@@ -13,7 +15,7 @@ exports.padRight = function(string, pad, length) {
 exports.pad = function(string, length, chr) {
 	chr = chr || " ";
 
-	var pad = (length - string.length) / 2,
+	var pad = (length - ansiTrim(string).length) / 2,
 		intPad = Math.floor(pad),
 		start = intPad + (pad == intPad?0:1);
 
@@ -29,7 +31,7 @@ exports.wordAwareFormat = function(string, length) {
 
 	while(words.length > 0) {
 		var word = words.shift(),
-			word_length = word.length + 1;
+			word_length = ansiTrim(word).length + 1;
 
 		line_length += word_length;
 		if (line_length > length) {
@@ -41,7 +43,7 @@ exports.wordAwareFormat = function(string, length) {
 		line.push(word);
 	}
 
-	if (line.length > 0)
+	if (ansiTrim(line).length > 0)
 		output += line.join(" ") + "\n";
 
 	return output;

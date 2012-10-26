@@ -1,6 +1,9 @@
 #!/usr/bin/env node
-
-var expanded = false,
+var options = {
+		expanded: false,
+		color: false,
+		useFahrenheit: true
+	},
 	args = Array.prototype.slice.apply(process.argv),
 	out = process.stdout,
 	err = process.stderr;
@@ -12,12 +15,18 @@ args.shift();
 for (var i=0; i<args.length; i++) {
 	arg = args[i];
 	if (arg.trim() == "-f")
-		expanded = true;
+		options.expanded = true;
+	if (arg.trim() == "--color")
+		options.color = true;
+	if (arg.trim() == "-c")
+		options.useFahrenheit = false;
 }
 
 var api_key = process.env.WEATHER_API,
 	API = require('../src/api').API,
 	utils = require('../src/utils'),
+	clc = require('cli-color'),
+	ansiTrim = require('cli-color/lib/trim'),
 	api = new API(api_key);
 
 if (!api_key) {
@@ -29,20 +38,44 @@ if (!api_key) {
 	return;
 }
 
-api
-.geoforecast()
+var none=function(s){return s;},
+	colorSpace = {
+		none: {
+			bar: none,
+			loc: none,
+			high: none,
+			temp: none,
+			day: none,
+			tempLow: none,
+			dim: none,
+		},
+		default: {
+			bar: none,
+			loc: clc.yellow,
+			high: clc.blue.bold,
+			temp: clc.blue.bold,
+			day: none,
+			tempLow: none,
+			dim: clc.red
+		}
+	},
+	color = colorSpace[options.color?'default':'none'];
+
+api.geoforecast()
 .then(function(data) {
 
-	var weather  = data.current_observation,
+	var weather      = data.current_observation,
 		txt_forecast = data.forecast.txt_forecast.forecastday,
-		forecast = data.forecast.simpleforecast.forecastday,
-		location = weather.observation_location.full,
-		time     = weather.observation_time,
-		temp     = weather.temperature_string,
-		conditions = weather.weather;
+		forecast     = data.forecast.simpleforecast.forecastday,
+
+		location   = color.loc(weather.observation_location.full),
+		time       = color.dim(weather.observation_time),
+		temp       = color.temp(weather.temperature_string),
+		conditions = color.high(weather.weather),
+		credits    = color.dim("Weather Underground");
 
 	var segment,
-		credits = " Weather Underground",
+		deg = options.useFahrenheit?"fahrenheit":"celsius",
 		line_length = 80,
 		forecast_length = 80,
 		block_size = Math.floor(line_length / forecast.length),
@@ -57,19 +90,20 @@ api
 		segment = forecast[i];
 
 		line_day += utils.pad(segment.date.weekday_short, block_size);
-		line_temp += utils.pad(segment.high.fahrenheit + " / "
-								+ segment.low.fahrenheit, block_size);
+		line_temp += utils.pad(color.tempLow(segment.high[deg]) + " / "
+								+ color.tempLow(segment.low[deg]), block_size);
 	}
 
-	var output = "\n"
-			   + utils.repeat('-', line_length) + "\n\n"
+	var bar = color.bar(utils.repeat('-', line_length)),
+		output = "\n"
+			   + bar + "\n\n"
 			   + utils.pad(location, line_length) + "\n\n"
 			   + utils.pad(conditions + " :: " + temp, line_length) + "\n\n"
 			   + utils.pad(line_day, line_length) + "\n"
 			   + utils.pad(line_temp, line_length) + "\n";
 
-	if (expanded) {
-		output += "\n" + utils.repeat('-', line_length) + "\n";
+	if (options.expanded) {
+		output += "\n" + bar + "\n";
 		for (i=0; i<txt_forecast.length; i++) {
 			segment = txt_forecast[i];
 
@@ -78,8 +112,9 @@ api
 		}
 	}
 
-	output += "\n" + utils.repeat('-', line_length) + "\n"
-		   + time + utils.repeat(' ', line_length - credits.length - time.length) + credits + "\n";
+	output += "\n" + bar + "\n"
+		   + time + utils.repeat(' ', line_length - ansiTrim(credits).length
+		   								 - ansiTrim(time).length) + credits + "\n";
 
 	out.write(output);
 
