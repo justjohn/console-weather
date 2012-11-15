@@ -7,7 +7,8 @@ var options = {
 	args = Array.prototype.slice.apply(process.argv),
 	out = process.stdout,
 	err = process.stderr,
-	api_key    = process.env.WEATHER_API,
+	api_key = process.env.WEATHER_API,
+	columns = 80,
 
 	// Dependencies
 	API        = require('../src/api').API,
@@ -49,14 +50,18 @@ if (!api_key) {
 
 var color = colorSpace[options.color?'default':'none'];
 
-api.geoforecast()
+utils.getTerminalSize().then(function(data) {
+	columns = data.columns || columns;
+
+	return api.geoforecast();
+})
 .then(function(data) {
 
 	var weather      = data.current_observation,
 		txt_forecast = data.forecast.txt_forecast.forecastday,
 		forecast     = data.forecast.simpleforecast.forecastday,
 
-		location   = color.loc(weather.observation_location.full),
+		location   = color.loc(weather.display_location.full),
 		time       = color.dim(weather.observation_time),
 		temp       = color.temp(weather.temperature_string),
 		conditions = color.high(weather.weather),
@@ -64,8 +69,8 @@ api.geoforecast()
 
 	var segment,
 		deg = options.useFahrenheit?"fahrenheit":"celsius",
-		line_length = 80,
-		forecast_length = 80,
+		line_length = columns,
+		forecast_length = columns,
 		block_size = Math.floor(line_length / forecast.length),
 		i,
 		line_day = "",
