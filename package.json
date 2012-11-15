@@ -2,7 +2,7 @@
   "author": "John Roepke <john@justjohn.us> (http://john.sh/)",
   "name": "console-weather",
   "description": "A console client for getting the current weather forecast.",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "homepage": "https://github.com/justjohn/console-weather",
   "licenses": [
     { "type": "BSD-2-Clause",
