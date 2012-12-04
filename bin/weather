@@ -69,9 +69,24 @@ utils.getTerminalSize().then(function(data) {
 	columns = data.columns || columns;
 
 	if (location)
-		return api.forecast(location);
+		return api.queryForecast(location);
 	else
 		return api.geoforecast();
+})
+.then(function(data) {
+	if (data.forecast) {
+		return data;
+	} else if (data.response && data.response.results) {
+		// lookup is query, use first result
+		var lookup = data.response.results[0].l;
+		return api.forecast(lookup);
+	} else {
+		throw {
+			type: "LookupError",
+			description: "Unable to find location " + location
+		};
+	}
+
 })
 .then(function(data) {
 
