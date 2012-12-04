@@ -19,7 +19,12 @@ exports.getTerminalSize = function() {
     });
 
     cmd.stderr.on('data', function(data) {
-    	deferred.reject(new Error("Unable to get dimensions"));
+    	// fallback to 70 width to fit most layouts
+        deferred.resolve({
+        	columns: 70,
+        	lines: -1
+        });
+    	// deferred.reject({type: "TerminalError", description: "Unable to get dimensions"});
     });
 
     return deferred.promise;
