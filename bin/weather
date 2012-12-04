@@ -4,6 +4,7 @@ var options = {
 		color: false,
 		useFahrenheit: true
 	},
+	location,
 	args = Array.prototype.slice.apply(process.argv),
 	out = process.stdout,
 	err = process.stderr,
@@ -53,7 +54,10 @@ var color = colorSpace[options.color?'default':'none'];
 utils.getTerminalSize().then(function(data) {
 	columns = data.columns || columns;
 
-	return api.geoforecast();
+	if (location)
+		return api.forecast(location);
+	else
+		return api.geoforecast();
 })
 .then(function(data) {
 

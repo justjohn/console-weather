@@ -75,11 +75,11 @@ API.prototype.geolocate = function() {
 	return deferred.promise;
 };
 
-API.prototype.forecast = function(location) {
-	var deferred = Q.defer(),
-        path = location.l;
+API.prototype.forecast = function(path) {
+	var deferred = Q.defer();
 
-	this.call('/conditions/forecast' + path  + '.json').then(function(data) {
+	this.call('/conditions/forecast/q/' + path  + '.json')
+	.then(function(data) {
 		deferred.resolve(data);
 
 	}, function(err) {
