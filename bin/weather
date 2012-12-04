@@ -11,6 +11,9 @@ var options = {
 	api_key = process.env.WEATHER_API,
 	columns = 80,
 
+	// metadata
+	pkg        = require('../package.json'),
+
 	// Dependencies
 	API        = require('../src/api').API,
 	utils      = require('../src/utils'),
@@ -25,23 +28,34 @@ args.shift();
 args.shift();
 
 for (var i=0; i<args.length; i++) {
-	arg = args[i];
-	if (arg.trim() == "-f")
-		options.expanded = true;
+	arg = args[i].trim();
 
-	if (arg.trim() == "--color")
-		options.color = true;
-
-	if (arg.trim() == "-c")
-		options.useFahrenheit = false;
-
-	if (arg.trim() == "--help")
+	switch (arg)
 	{
-		doc.print(out, "USAGE");
-		if (!api_key) doc.print(err, "API_KEY");
-		return 1;
-	}
+		case "-f":
+			options.expanded = true;
+			break;
 
+		case "--color":
+			options.color = true;
+			break;
+
+		case "-c":
+			options.useFahrenheit = false;
+			break;
+
+		case "--help":
+			doc.print(out, "USAGE");
+			if (!api_key) doc.print(err, "API_KEY");
+			return 1;
+
+		case "--version":
+			out.write(pkg.name + " " + pkg.version + "\n");
+			return 1;
+
+		default:
+			location = arg;
+	}
 }
 
 if (!api_key) {
