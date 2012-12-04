@@ -113,8 +113,10 @@ utils.getTerminalSize().then(function(data) {
 
 })
 .fail(function(error) {
+	var desc = error.description || error.message;
+
 	err.write(
 		"Unable to access Weather Underground API.\n\n    "
-	 	+ error.type + ": " + error.description + "\n");
+	 	+ error.type + ": " + desc + "\n");
 });
 
