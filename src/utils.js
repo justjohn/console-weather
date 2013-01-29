@@ -2,32 +2,21 @@ var ansiTrim = require('cli-color/lib/trim'),
 	Q = require("q");
 
 exports.getTerminalSize = function() {
-	var spawn = require('child_process').spawn,
-		deferred = Q.defer(),
-		cmd = spawn('resize');
+	var deferred = Q.defer();
+        
+        if (process.stdout.columns) {
+                deferred.resolve({
+                        columns: process.stdout.columns,
+                        rows: process.stdout.rows
+                });
+        } else {
+                deferred.resolve({
+                        columns: 70, // a sensible default
+                        rows: -1
+                }); 
+        }
 
-    cmd.stdout.on('data', function(data){
-        data = String(data)
-        var lines = data.split('\n'),
-            cols = Number(lines[0].match(/^COLUMNS=([0-9]+);$/)[1]),
-            lines = Number(lines[1].match(/^LINES=([0-9]+);$/)[1])
-
-        deferred.resolve({
-        	columns: cols,
-        	lines: lines
-        });
-    });
-
-    cmd.stderr.on('data', function(data) {
-    	// fallback to 70 width to fit most layouts
-        deferred.resolve({
-        	columns: 70,
-        	lines: -1
-        });
-    	// deferred.reject({type: "TerminalError", description: "Unable to get dimensions"});
-    });
-
-    return deferred.promise;
+        return deferred.promise;
 }
 
 exports.repeat = function(str, length) {
