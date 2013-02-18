@@ -15,7 +15,7 @@ var options = {
 	pkg        = require('../package.json'),
 
 	// Dependencies
-	API        = require('../src/api').API,
+	API        = require('weather-api').WeatherUnderground,
 	utils      = require('../src/utils'),
 	colorSpace = require('../conf/colors'),
 	doc        = require('../conf/doc')
@@ -89,7 +89,6 @@ utils.getTerminalSize().then(function(data) {
 
 })
 .then(function(data) {
-
 	var weather      = data.current_observation,
 		txt_forecast = data.forecast.txt_forecast.forecastday,
 		forecast     = data.forecast.simpleforecast.forecastday,

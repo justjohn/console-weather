@@ -14,10 +14,10 @@
   },
   "dependencies": {
     "q": "0.8.x",
-    "cli-color": "0.2.x"
+    "cli-color": "0.2.x",
+    "weather-api": "0.x.x"
   },
   "devDependencies": {},
-  "optionalDependencies": {},
   "engines": {
     "node": "*"
   },
